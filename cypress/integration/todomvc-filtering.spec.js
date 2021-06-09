@@ -1,30 +1,40 @@
-/// <reference types="cypress"/>
+/// <reference types="cypress" />
+import {
+  navigate,
+  addTodo,
+  toggleTodo,
+  showOnlyActiveTodos,
+  showOnlyCompletedTodos,
+  showAllTodos,
+  validateNumberOfTodosShown
+} from '../page-objects/todo-page';
 
-describe('filtering', () => {
+describe('filtering', function () {
   beforeEach(() => {
-    cy.visit('http://todomvc-app-for-testing.surge.sh');
-    cy.get('.new-todo').type('Clean Room{enter}');
-    cy.get('.new-todo').type('Learn JavaScript{enter}');
-    cy.get('.new-todo').type('Use Cypress{enter}');
+    navigate();
 
-    cy.get('.todo-list li:nth-child(2) .toggle').click();
+    addTodo('Clean room');
+    addTodo('Learn JavaScript');
+    addTodo('Use Cypress');
+
+    toggleTodo(1);
   });
 
-  it('should filter "Active" todos', () => {
-    cy.contains('Active').click();
+  it('should filter "Active" correctly', () => {
+    showOnlyActiveTodos();
 
-    cy.get('.todo-list li').should('have.length', 2);
+    validateNumberOfTodosShown(2);
   });
 
-  it('should filter "Completed" todos', () => {
-    cy.contains('Completed').click();
+  it('should filter "Completed" correctly', () => {
+    showOnlyCompletedTodos();
 
-    cy.get('.todo-list li').should('have.length', 1);
+    validateNumberOfTodosShown(1);
   });
 
-  it('should filter "All" todos', () => {
-    cy.contains('All').click();
+  it('should filter "All" correctly', () => {
+    showAllTodos();
 
-    cy.get('.todo-list li').should('have.length', 3);
+    validateNumberOfTodosShown(3);
   });
 });

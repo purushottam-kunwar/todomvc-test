@@ -1,33 +1,40 @@
-/// <reference types="cypress"/>
+/// <reference types="cypress" />
+import {
+  navigate,
+  addTodo,
+  toggleTodo,
+  showOnlyActiveTodos,
+  showOnlyCompletedTodos,
+  showAllTodos,
+  validateNumberOfTodosShown
+} from '../page-objects/todo-page';
 
-describe('todo actions', () => {
+describe('filtering', function () {
   beforeEach(() => {
-    cy.visit('http://todomvc-app-for-testing.surge.sh');
-    cy.get('.new-todo', { timeout: 6000 }).type('Clean Room{enter}');
+    navigate();
+
+    addTodo('Clean room');
+    addTodo('Learn JavaScript');
+    addTodo('Use Cypress');
+
+    toggleTodo(1);
   });
 
-  it('should add a new todo to the list', () => {
-    cy.visit('http://todomvc-app-for-testing.surge.sh');
+  it('should filter "Active" correctly', () => {
+    showOnlyActiveTodos();
 
-    // todo element render after 5 sec
-    // cy.visit('http://todomvc-app-for-testing.surge.sh/?delay-new-todo=5000');
-
-    // { timeout: 6000 } delay 6 sec
-    cy.get('.new-todo', { timeout: 6000 }).type('Clean Room{enter}');
-    cy.get('label').should('have.text', 'Clean Room');
-
-    cy.get('.toggle').should('not.be.checked');
+    validateNumberOfTodosShown(2);
   });
 
-  it('should mark a todo completed', () => {
-    cy.get('label').should('have.text', 'Clean Room');
-    cy.get('.toggle').click();
-    cy.get('label').should('have.css', 'text-decoration-line', 'line-through');
+  it('should filter "Completed" correctly', () => {
+    showOnlyCompletedTodos();
+
+    validateNumberOfTodosShown(1);
   });
 
-  it('should clear todo completed', () => {
-    cy.get('.toggle').click();
-    cy.get('.clear-completed').click();
-    cy.get('.todo-list').should('not.have.descendants', 'li');
+  it('should filter "All" correctly', () => {
+    showAllTodos();
+
+    validateNumberOfTodosShown(3);
   });
 });
